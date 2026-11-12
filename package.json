@@ -1,0 +1,27 @@
+{
+  "name": "sistema-inventario-cloud",
+  "version": "1.0.0",
+  "description": "Sistema de consulta de inventario desplegado en Cloudflare Workers mediante Terraform, con pruebas automatizadas, monitoreo y controles de seguridad.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BenAldoBeecher/sistema-inventario-cloud.git"
+  },
+  "keywords": [],
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/BenAldoBeecher/sistema-inventario-cloud/issues"
+  },
+  "homepage": "https://github.com/BenAldoBeecher/sistema-inventario-cloud#readme",
+  "private": true,
+  "devDependencies": {
+    "vitest": "^5.1.0"
+  }
+}
