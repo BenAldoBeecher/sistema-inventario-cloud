@@ -1,0 +1,4 @@
+# Plantilla de configuración para Terraform.
+# Reemplazar el valor de ejemplo por el identificador de la cuenta.
+
+account_id = "REEMPLAZAR_POR_EL_ID_DE_32_CARACTERES"
