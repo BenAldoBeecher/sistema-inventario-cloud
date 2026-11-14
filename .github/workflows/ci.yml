@@ -1,5 +1,5 @@
 
-# Pipeline de integración continua del sistema de inventario.
+# Pipeline de integracion continua del sistema de inventario.
 
 name: Validacion del proyecto
 
@@ -12,23 +12,25 @@ on:
     branches:
       - main
 
-# Permisos mínimos necesarios para el pipeline.
+# Permisos minimos necesarios para el pipeline.
 permissions:
   contents: read
 
 jobs:
   pruebas-y-validaciones:
     name: Pruebas y validaciones
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-      # Obtener el código del repositorio.
+      # Obtener el codigo del repositorio sin conservar credenciales Git.
       - name: Descargar codigo del repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       # Configurar Node.js.
       - name: Configurar Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -43,7 +45,7 @@ jobs:
 
       # Configurar Terraform.
       - name: Configurar Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4.0.1
         with:
           terraform_version: 1.17.0
 
@@ -55,6 +57,6 @@ jobs:
       - name: Inicializar Terraform
         run: terraform -chdir=terraform init -backend=false
 
-      # Validar la configuración de infraestructura.
+      # Validar la configuracion de infraestructura.
       - name: Validar Terraform
         run: terraform -chdir=terraform validate
