@@ -1,0 +1,60 @@
+
+# Pipeline de integración continua del sistema de inventario.
+
+name: Validacion del proyecto
+
+# Ejecutar cuando se actualice main o se cree un pull request.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Permisos mínimos necesarios para el pipeline.
+permissions:
+  contents: read
+
+jobs:
+  pruebas-y-validaciones:
+    name: Pruebas y validaciones
+    runs-on: ubuntu-latest
+
+    steps:
+      # Obtener el código del repositorio.
+      - name: Descargar codigo del repositorio
+        uses: actions/checkout@v4
+
+      # Configurar Node.js.
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # Instalar las dependencias.
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Ejecutar las pruebas automatizadas.
+      - name: Ejecutar pruebas automatizadas
+        run: npm test
+
+      # Configurar Terraform.
+      - name: Configurar Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.17.0
+
+      # Verificar el formato de los archivos Terraform.
+      - name: Verificar formato Terraform
+        run: terraform -chdir=terraform fmt -check -recursive
+
+      # Inicializar Terraform sin configurar un backend remoto.
+      - name: Inicializar Terraform
+        run: terraform -chdir=terraform init -backend=false
+
+      # Validar la configuración de infraestructura.
+      - name: Validar Terraform
+        run: terraform -chdir=terraform validate
