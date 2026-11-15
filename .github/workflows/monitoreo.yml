@@ -1,0 +1,92 @@
+
+# Monitoreo periódico de disponibilidad de la API.
+
+name: Monitoreo de disponibilidad
+
+on:
+  # Ejecutar cada 15 minutos.
+  schedule:
+    - cron: "*/15 * * * *"
+
+  # Permitir ejecución manual desde GitHub.
+  workflow_dispatch:
+
+# Permisos mínimos necesarios.
+permissions:
+  contents: read
+
+jobs:
+  verificar-api:
+    name: Verificar disponibilidad de la API
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+
+    steps:
+      # Consultar el estado del endpoint de salud.
+      - name: Comprobar endpoint de salud
+        env:
+          API_URL: https://sistema-inventario-cloud.fornaiyam24.workers.dev
+        run: |
+          set -euo pipefail
+
+          respuesta=$(curl \
+            --fail \
+            --silent \
+            --show-error \
+            --retry 2 \
+            --retry-delay 5 \
+            --max-time 20 \
+            "$API_URL/health")
+
+          echo "Respuesta recibida: $respuesta"
+
+          echo "$respuesta" | node -e '
+            let data = "";
+            process.stdin.on("data", chunk => data += chunk);
+            process.stdin.on("end", () => {
+              try {
+                const response = JSON.parse(data);
+                if (response.status !== "OK") {
+                  console.error("La API no devolvió el estado esperado.");
+                  process.exit(1);
+                }
+                console.log("Comprobación de salud aprobada.");
+              } catch (error) {
+                console.error("Respuesta JSON inválida.");
+                process.exit(1);
+              }
+            });
+          '
+
+      # Comprobar que el endpoint de productos también responde.
+      - name: Comprobar consulta de productos
+        env:
+          API_URL: https://sistema-inventario-cloud.fornaiyam24.workers.dev
+        run: |
+          set -euo pipefail
+
+          respuesta=$(curl \
+            --fail \
+            --silent \
+            --show-error \
+            --max-time 20 \
+            "$API_URL/productos")
+
+          echo "$respuesta" | node -e '
+            let data = "";
+            process.stdin.on("data", chunk => data += chunk);
+            process.stdin.on("end", () => {
+              try {
+                const productos = JSON.parse(data);
+                if (!Array.isArray(productos) || productos.length === 0) {
+                  console.error("La consulta no devolvió una lista válida.");
+                  process.exit(1);
+                }
+                console.log("Consulta de productos aprobada.");
+                console.log("Productos recibidos:", productos.length);
+              } catch (error) {
+                console.error("Respuesta JSON inválida.");
+                process.exit(1);
+              }
+            });
+          '
