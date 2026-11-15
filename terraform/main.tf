@@ -20,10 +20,13 @@ resource "cloudflare_worker" "api_inventario" {
   account_id = var.account_id
   name       = var.nombre_worker
 
-  # Habilita la observabilidad y el registro de invocaciones.
+  # Habilita la observabilidad y protege los parámetros de las URL.
   observability = {
     enabled            = true
     head_sampling_rate = 1
+
+    # Evita registrar parámetros de consulta de las URL.
+    redact_query_string = true
 
     logs = {
       enabled            = true
@@ -31,6 +34,7 @@ resource "cloudflare_worker" "api_inventario" {
       invocation_logs    = true
     }
   }
+
 
   # Habilita el acceso mediante el subdominio workers.dev.
   subdomain = {
