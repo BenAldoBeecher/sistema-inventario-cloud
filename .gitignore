@@ -23,3 +23,8 @@ coverage/
 
 *.pem
 *.key
+
+# Archivos locales de Cloudflare Workers
+.dev.vars
+.dev.vars.*
+.wrangler/
