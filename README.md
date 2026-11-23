@@ -223,7 +223,7 @@ Los controles implementados incluyen:
 - Análisis de secretos con Gitleaks.
 - Exclusión de archivos locales sensibles.
 - Autenticación mediante variable de entorno.
-- Redacción de parámetros de consulta en logs.
+- Redacción de parámetros de consulta en logs, configurada mediante la API de Cloudflare y verificada con una consulta posterior que devolvió `redact_query_string = true`. El proveedor Terraform 5.29.0 no expone este ajuste.
 - Desactivación de URLs de vista previa.
 - Restricción de métodos HTTP.
 - Respuestas con `Cache-Control: no-store`.

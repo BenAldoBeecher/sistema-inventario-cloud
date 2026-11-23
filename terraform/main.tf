@@ -20,13 +20,10 @@ resource "cloudflare_worker" "api_inventario" {
   account_id = var.account_id
   name       = var.nombre_worker
 
-  # Habilita la observabilidad y protege los parámetros de las URL.
+  # Habilita los logs de invocación y configura su muestreo.
   observability = {
     enabled            = true
     head_sampling_rate = 1
-
-    # Evita registrar parámetros de consulta de las URL.
-    redact_query_string = true
 
     logs = {
       enabled            = true
